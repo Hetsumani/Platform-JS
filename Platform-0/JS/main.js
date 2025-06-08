@@ -17,7 +17,7 @@ window.onload = function () {
 
 
     function update(dt) {
-        jugador.update(input.lastKey);
+        jugador.update(input.lastKey, dt);
     }
 
     function draw() {
