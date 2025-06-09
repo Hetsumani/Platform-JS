@@ -1,4 +1,3 @@
-# Platform-JS
 # Platform-JS 🎮  
 
 ### Prototipo educativo para un juego de plataformas con JavaScript y Canvas
