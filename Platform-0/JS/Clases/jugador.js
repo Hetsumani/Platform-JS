@@ -49,7 +49,10 @@ export default class Jugador {
     this.maxFrames    = 4;    // Nº total de frames de la animación paradoDerecha
     this.FPS          = 8;    // Velocidad de animación
     this.frameTimer   = 0;    // Acumulador de tiempo para avanzar de frame
-    this.ajusteTiempo = 1000 / this.FPS; // Duración (ms) de cada frame
+    this.ajusteTiempo = 1000 / this.FPS; // Duración (ms) de cada frame'
+    this.caerEstilo = false;
+    this.direccionCaida = 0;
+    
 
     // ───────────── Propiedades físicas ───────────────
     this.x = 100;                          // Posición X inicial
@@ -121,6 +124,15 @@ export default class Jugador {
       this.y = this.altojuego - this.altoSprite - 32;
       this.velocidadSalto = 0;
     }
+    
+    if (this.caerEstilo){
+      
+      this.velocidad += 250 * this.direccionCaida  * dt; // Desaceleración horizontal al caer      
+    }
+
+    console.log("Estado actual:", this.estadoActual.constructor.name,
+      "caerEstilo:", this.caerEstilo
+    );
   }
 
   /**

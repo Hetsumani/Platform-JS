@@ -11,16 +11,16 @@
 // Enumeración de índices para acceder al array this.estados[] dentro de Jugador.
 // Facilita llamar setState() con un entero en lugar de instancias/clases.
 export const states = {
-  PARADO_IZQ : 0,
-  PARADO_DER : 1,
+  PARADO_IZQ: 0,
+  PARADO_DER: 1,
   AGACHADO_IZQ: 2,
   AGACHADO_DER: 3,
-  CAMINAR_IZQ : 4,
-  CAMINAR_DER : 5,
-  SALTAR_IZQ  : 6,
-  SALTAR_DER  : 7,
-  CAER_IZQ    : 8,
-  CAER_DER    : 9,
+  CAMINAR_IZQ: 4,
+  CAMINAR_DER: 5,
+  SALTAR_IZQ: 6,
+  SALTAR_DER: 7,
+  CAER_IZQ: 8,
+  CAER_DER: 9,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,8 +68,16 @@ export class ParadoIzq extends State {
   // ─────────────────────────────────────────────────────────────────────────
   enter() {
     // Elemento <img id="paradoIzquierda"> precargado en el HTML.
-    this.jugador.spriteSheet = document.getElementById('paradoIzquierda');
-    this.jugador.maxFrames   = 4;  // Idle loop de 4 fotogramas.
+    this.jugador.spriteSheet = paradoIzquierda;
+    this.jugador.maxFrames = 4;  // Idle loop de 4 fotogramas.
+    console.log("Entrando en estado: " + this.state);
+    if (this.jugador.caerEstilo) {
+      console.log("Reiniciando caída con estilo");      
+      this.jugador.direccionCaida = 0; // Reinicia dirección de caída
+      this.jugador.velocidad = 0;       
+    }
+    this.jugador.caerEstilo = false; // Reinicia bandera de caída con estilo
+    console.log("Caida estilo en estado parada:", this.jugador.caerEstilo);
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -85,17 +93,18 @@ export class ParadoIzq extends State {
   // ─────────────────────────────────────────────────────────────────────────
   handleInput(input) {
     // ── Transiciones detonadas DIRECTAMENTE por teclado ──
-    if      (input === 'PRESS right')  this.jugador.setState(states.CAMINAR_DER);
-    else if (input === 'PRESS down')   this.jugador.setState(states.AGACHADO_IZQ);
-    else if (input === 'PRESS left')   this.jugador.setState(states.CAMINAR_IZQ);
+    if (input === 'PRESS right') this.jugador.setState(states.CAMINAR_DER);
+    else if (input === 'PRESS down') this.jugador.setState(states.AGACHADO_IZQ);
+    else if (input === 'PRESS left') this.jugador.setState(states.CAMINAR_IZQ);
     else if (input === 'PRESS up') {   // Saltar
       this.jugador.saltando = true;
       this.jugador.setState(states.SALTAR_IZQ);
     }
 
     // ── Corrección basada en física: si ya hay velocidad, no debería estar Idle ──
-    if      (this.jugador.velocidad > 0) this.jugador.setState(states.CAMINAR_DER);
-    else if (this.jugador.velocidad < 0) this.jugador.setState(states.CAMINAR_IZQ);
+    if (this.jugador.velocidad < 0 && !this.caerEstilo){
+      this.jugador.setState(states.CAMINAR_IZQ);
+    } 
   }
 }
 
@@ -107,22 +116,26 @@ export class ParadoDer extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('paradoDerecha');
-    this.jugador.maxFrames   = 4;
+    this.jugador.maxFrames = 4;
+    if (this.jugador.caerEstilo) {      
+      this.jugador.direccionCaida = 0; // Reinicia dirección de caída
+      this.jugador.velocidad = 0; 
+    }
+    this.jugador.caerEstilo = false; // Reinicia bandera de caída con estilo
   }
 
   handleInput(input) {
     // Entradas de usuario que provocan cambio de estado
-    if      (input === 'PRESS left')   this.jugador.setState(states.CAMINAR_IZQ);
-    else if (input === 'PRESS down')   this.jugador.setState(states.AGACHADO_DER);
-    else if (input === 'PRESS right')  this.jugador.setState(states.CAMINAR_DER);
+    if (input === 'PRESS left') this.jugador.setState(states.CAMINAR_IZQ);
+    else if (input === 'PRESS down') this.jugador.setState(states.AGACHADO_DER);
+    else if (input === 'PRESS right') this.jugador.setState(states.CAMINAR_DER);
     else if (input === 'PRESS up') {
       this.jugador.saltando = true;
       this.jugador.setState(states.SALTAR_DER);
     }
 
     // Ajuste de coherencia con la física (por ejemplo, empujones)
-    if      (this.jugador.velocidad < 0) this.jugador.setState(states.CAMINAR_IZQ);
-    else if (this.jugador.velocidad > 0) this.jugador.setState(states.CAMINAR_DER);
+    if (this.jugador.velocidad > 0 && !this.caerEstilo) this.jugador.setState(states.CAMINAR_DER);
   }
 }
 
@@ -138,14 +151,14 @@ export class AgachadoDer extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('agachadoDerecha');
-    this.jugador.fps        = 8;  // Velocidad de animación
-    this.jugador.maxFrames  = 3;
+    this.jugador.fps = 8;  // Velocidad de animación
+    this.jugador.maxFrames = 3;
   }
 
   handleInput(input) {
-    if      (input === 'PRESS left')   this.jugador.setState(states.CAMINAR_IZQ);
-    else if (input === 'PRESS right')  this.jugador.setState(states.CAMINAR_DER);
-    else if (input === 'PRESS up')     this.jugador.setState(states.PARADO_DER);
+    if (input === 'PRESS left') this.jugador.setState(states.CAMINAR_IZQ);
+    else if (input === 'PRESS right') this.jugador.setState(states.CAMINAR_DER);
+    else if (input === 'RELEASE down') this.jugador.setState(states.PARADO_DER);
   }
 }
 
@@ -157,14 +170,14 @@ export class AgachadoIzq extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('agachadoIzquierda');
-    this.jugador.fps        = 8;
-    this.jugador.maxFrames  = 3;
+    this.jugador.fps = 8;
+    this.jugador.maxFrames = 3;
   }
 
   handleInput(input) {
-    if      (input === 'PRESS right')  this.jugador.setState(states.CAMINAR_DER);
-    else if (input === 'PRESS left')   this.jugador.setState(states.CAMINAR_IZQ);
-    else if (input === 'PRESS up')     this.jugador.setState(states.PARADO_IZQ);
+    if (input === 'PRESS right') this.jugador.setState(states.CAMINAR_DER);
+    else if (input === 'PRESS left') this.jugador.setState(states.CAMINAR_IZQ);
+    else if (input === 'RELEASE down') this.jugador.setState(states.PARADO_IZQ);
   }
 }
 
@@ -179,15 +192,16 @@ export class CaminarIzq extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('caminarIzquierda');
-    this.jugador.velocidad   = -this.jugador.maxVelocidad; // Movimiento ←
-    this.jugador.fps         = 16;
-    this.jugador.maxFrames   = 7;
+    this.jugador.velocidad = -this.jugador.maxVelocidad; // Movimiento ←
+    this.jugador.fps = 16;
+    this.jugador.maxFrames = 7;
+    this.jugador.caerEstilo = false; // Reinicia caída con estilo
   }
 
   handleInput(input) {
-    if      (input === 'PRESS right')   this.jugador.setState(states.CAMINAR_DER);
-    else if (input === 'PRESS down')    this.jugador.setState(states.AGACHADO_IZQ);
-    else if (input === 'RELEASE left')  this.jugador.setState(states.PARADO_IZQ);
+    if (input === 'PRESS right') this.jugador.setState(states.CAMINAR_DER);
+    else if (input === 'PRESS down') this.jugador.setState(states.AGACHADO_IZQ);
+    else if (input === 'RELEASE left') this.jugador.setState(states.PARADO_IZQ);
     else if (input === 'PRESS up') {
       this.jugador.saltando = true;
       this.jugador.setState(states.SALTAR_IZQ);
@@ -208,14 +222,15 @@ export class CaminarDer extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('caminarDerecha');
-    this.jugador.velocidad   =  this.jugador.maxVelocidad; // Movimiento →
-    this.jugador.fps         = 16;
-    this.jugador.maxFrames   = 7;
+    this.jugador.velocidad = this.jugador.maxVelocidad; // Movimiento →
+    this.jugador.fps = 16;
+    this.jugador.maxFrames = 7;
+    this.jugador.caerEstilo = false; // Reinicia caída con estilo
   }
 
   handleInput(input) {
-    if      (input === 'PRESS left')    this.jugador.setState(states.CAMINAR_IZQ);
-    else if (input === 'PRESS down')    this.jugador.setState(states.AGACHADO_DER);
+    if (input === 'PRESS left') this.jugador.setState(states.CAMINAR_IZQ);
+    else if (input === 'PRESS down') this.jugador.setState(states.AGACHADO_DER);
     else if (input === 'RELEASE right') this.jugador.setState(states.PARADO_DER);
     else if (input === 'PRESS up') {
       this.jugador.saltando = true;
@@ -239,15 +254,21 @@ export class SaltarIzq extends State {
   }
 
   enter() {
-    this.jugador.spriteSheet   = document.getElementById('saltarIzquierda');
-    this.jugador.velocidadSalto= this.jugador.maxVelocidadSalto; // Impulso ↑
-    this.jugador.maxFrames     = 6;
+    this.jugador.spriteSheet = document.getElementById('saltarIzquierda');
+    this.jugador.velocidadSalto = this.jugador.maxVelocidadSalto; // Impulso ↑
+    this.jugador.maxFrames = 6;
   }
 
-  handleInput(_) {
+  handleInput(input) {
     // Cuando la velocidadSalto pasa de negativa (subiendo) a positiva (bajando)
     if (this.jugador.velocidadSalto > 0)
       this.jugador.setState(states.CAER_IZQ);
+
+    if (input === 'RELEASE left' && !this.jugador.caerEstilo && this.jugador.velocidad !== 0) {
+      console.log("Liberando tecla izquierda, caer estilo activado");
+      this.jugador.caerEstilo = true; // Bandera para caída con estilo
+      this.jugador.direccionCaida = 1; // Dirección de caída a la izquierda, invertido para desaceleración
+    }
   }
 }
 
@@ -258,14 +279,19 @@ export class SaltarDer extends State {
   }
 
   enter() {
-    this.jugador.spriteSheet   = document.getElementById('saltarDerecha');
-    this.jugador.velocidadSalto= this.jugador.maxVelocidadSalto;
-    this.jugador.maxFrames     = 6;
+    this.jugador.spriteSheet = document.getElementById('saltarDerecha');
+    this.jugador.velocidadSalto = this.jugador.maxVelocidadSalto;
+    this.jugador.maxFrames = 6;
   }
 
-  handleInput(_) {
+  handleInput(input) {
     if (this.jugador.velocidadSalto > 0)
       this.jugador.setState(states.CAER_DER);
+
+    if (input === 'RELEASE right' && !this.jugador.caerEstilo && this.jugador.velocidad !== 0) {
+      this.jugador.caerEstilo = true; // Bandera para caída con estilo
+      this.jugador.direccionCaida = -1; // Dirección de caída a la derecha, invertido para desaceleración
+    }
   }
 }
 
@@ -280,13 +306,18 @@ export class CaerIzq extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('caerIzquierda');
-    this.jugador.maxFrames   = 3;
-    this.jugador.saltando    = false; // Bandera de salto off
+    this.jugador.maxFrames = 3;    
+    this.jugador.saltando = false; // Bandera de salto off
   }
 
-  handleInput(_) {
+  handleInput(input) {
     if (this.jugador.enSuelo())
       this.jugador.setState(states.PARADO_IZQ);
+    else if (input === 'RELEASE left' && !this.jugador.caerEstilo && this.jugador.velocidad !== 0) {
+      this.jugador.caerEstilo = true; // Bandera para caída con estilo
+      this.jugador.direccionCaida = 1; // Dirección de caída a la izquierda, invertido para desaceleración
+      console.log("Liberando tecla izquierda en caída, caer estilo activado");
+    }
   }
 }
 
@@ -298,12 +329,17 @@ export class CaerDer extends State {
 
   enter() {
     this.jugador.spriteSheet = document.getElementById('caerDerecha');
-    this.jugador.maxFrames   = 3;
-    this.jugador.saltando    = false;
+    this.jugador.maxFrames = 3;
+    this.jugador.saltando = false;
   }
 
-  handleInput(_) {
+  handleInput(input) {
     if (this.jugador.enSuelo())
       this.jugador.setState(states.PARADO_DER);
+
+    else if (input === 'RELEASE right' && !this.jugador.caerEstilo && this.jugador.velocidad !== 0) {
+      this.jugador.caerEstilo = true; // Bandera para caída con estilo
+      this.jugador.direccionCaida = -1; // Dirección de caída a la derecha, invertido para desaceleración
+    }
   }
 }
