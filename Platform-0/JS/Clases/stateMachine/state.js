@@ -180,7 +180,7 @@ export class SaltarIzq extends State {
     enter() {
         this.jugador.spriteSheet = document.getElementById("saltarIzquierda");
         this.jugador.velocidadSalto = this.jugador.maxVelocidadSalto; // Ajusta la velocidad de salto
-        this.jugador.velocidad *= 0.8; // Reduce la velocidad horizontal al saltar
+        
         this.jugador.maxFrames = 6;
     }
 
@@ -199,7 +199,7 @@ export class SaltarDer extends State {
     enter() {
         this.jugador.spriteSheet = document.getElementById("saltarDerecha");
         this.jugador.velocidadSalto = this.jugador.maxVelocidadSalto; // Ajusta la velocidad de salto
-        this.jugador.velocidad *= 0.8; // Reduce la velocidad horizontal al saltar
+        
         this.jugador.maxFrames = 6;
     }
 

@@ -29,7 +29,7 @@ export default class Jugador {
         this.frameTimer = 0; // Temporizador para controlar la animación
         this.ajusteTiempo = 1000 / this.FPS; // Ajuste de tiempo para la animación
 
-        this.x = anchoJuego / 2 - this.anchoSprite / 2;
+        this.x = 100;
         this.y = altojuego - this.altoSprite;
         this.velocidad = 0;
         this.maxVelocidad = 200;
@@ -38,16 +38,25 @@ export default class Jugador {
         this.gravedad = 750; // Gravedad para la caída
         this.saltando = false; // Indica si el jugador está saltando
 
+
+        this.pantallas = 2;
     }
 
     draw(context) {
+        // Si el jugador.x es mayor que la mitad del ancho del juego, dibuja el sprite justo a la mitad del juego
+        // Pero x sigue modificándose normalmente
+        if (this.x > this.anchoJuego / 2) {
+            this.dibujarX = this.anchoJuego / 2;
+        } else {
+            this.dibujarX = this.x;
+        }
         context.drawImage(
             this.spriteSheet,
             this.columna * this.anchoSprite,
             this.fila * this.altoSprite,
             this.anchoSprite,
             this.altoSprite,
-            this.x,
+            this.dibujarX,
             this.y,
             this.anchoSprite,
             this.altoSprite
@@ -72,7 +81,7 @@ export default class Jugador {
         this.x += this.velocidad * dt;
         if (this.x < 0) {
             this.x = 0; // Limita el jugador al borde izquierdo
-        } else if (this.x + this.anchoSprite > this.anchoJuego) {
+        } else if (this.x + this.anchoSprite > this.anchoJuego * this.pantallas) {
             this.x = this.anchoJuego - this.anchoSprite; // Limita el jugador al borde derecho
         }
 
@@ -82,7 +91,7 @@ export default class Jugador {
         if (!this.enSuelo()) {
             this.velocidadSalto += this.gravedad * dt; // Aplica gravedad
         } else {
-            this.y = this.altojuego - this.altoSprite - 32; // Asegura que el jugador no salga del sueloa
+            this.y = this.altojuego - this.altoSprite - 32; // Asegura que el jugador no salga del suelo
             this.velocidadSalto = 0; // Resetea la velocidad de salto al tocar el suelo
         }
     }

@@ -1,5 +1,6 @@
 import Jugador from "./Clases/jugador.js";
 import InputHandler from "./Clases/stateMachine/input.js";
+import Mapa from "./Clases/mapa.js";
 
 window.onload = function () {
     const canvas = document.getElementById("canvas");
@@ -15,16 +16,16 @@ window.onload = function () {
 
     const input = new InputHandler();
 
-    const mapa = mapa1; // Asumiendo que tienes un mapa definido en otro archivo
+    const mapa1 = new Mapa(gameWidth, gameHeight, jugador);
 
-
-    function update(dt) {
+    function update(dt) {        
         jugador.update(input.lastKey, dt);
+        mapa1.update(dt);
     }
 
     function draw() {
         context.clearRect(0, 0, gameWidth, gameHeight); // Limpiar el canvas
-        context.drawImage(mapa, 0, -8, gameWidth, 368); // Dibujar el mapa
+        mapa1.draw(context);
         jugador.draw(context);
     }
 
