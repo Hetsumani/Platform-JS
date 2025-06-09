@@ -82,7 +82,7 @@ export default class Jugador {
         if (!this.enSuelo()) {
             this.velocidadSalto += this.gravedad * dt; // Aplica gravedad
         } else {
-            this.y = this.altojuego - this.altoSprite; // Asegura que el jugador no salga del suelo
+            this.y = this.altojuego - this.altoSprite - 32; // Asegura que el jugador no salga del sueloa
             this.velocidadSalto = 0; // Resetea la velocidad de salto al tocar el suelo
         }
     }
@@ -100,7 +100,7 @@ export default class Jugador {
     }
 
     enSuelo() {
-        return this.y >= this.altojuego - this.altoSprite; // Verifica si el jugador está en el suelo
+        return this.y >= this.altojuego - this.altoSprite - 32; // Verifica si el jugador está en el suelo
     }
 }
 

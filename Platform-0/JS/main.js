@@ -15,6 +15,8 @@ window.onload = function () {
 
     const input = new InputHandler();
 
+    const mapa = mapa1; // Asumiendo que tienes un mapa definido en otro archivo
+
 
     function update(dt) {
         jugador.update(input.lastKey, dt);
@@ -22,6 +24,7 @@ window.onload = function () {
 
     function draw() {
         context.clearRect(0, 0, gameWidth, gameHeight); // Limpiar el canvas
+        context.drawImage(mapa, 0, -8, gameWidth, 368); // Dibujar el mapa
         jugador.draw(context);
     }
 
